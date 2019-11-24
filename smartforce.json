@@ -1,0 +1,10 @@
+{
+  "name": "smartforce",
+  "description": "Chrome Native Messaging API Example Host",
+  "path": "smartforce.bat",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://njmllejkehpgfcodiadfcnoedohpfjpn/",
+	"chrome-extension://knplgkgojkpocoelfjkgohmmfmmhpioi/"
+  ]
+}
