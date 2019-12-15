@@ -48,6 +48,14 @@ if ($null -ne $msg.caseid) {
 }
 elseif ($null -ne $msg.file) {
     if ('write' -eq $msg.operation ) {
+
+        #special case to append content to file directly
+        if ($null -ne $msg.content.html) {
+            $msg.content.html | add-content -encoding utf8 $msg.file
+            return
+        }
+        
+        #update json object to file
         if (!(test-path $msg.file)) {
             write_file $msg.content $msg.file
         }
@@ -86,5 +94,11 @@ elseif ($null -ne $msg.file) {
             write_file $msg.content $msg.file
         }   
         reply @{ fail = $true }
+    }
+    elseif ('open' -eq $msg.operation) {
+        if (!(test-path $msg.file)) {
+            '' | Set-Content $msg.file
+        }   
+        Start-Process $msg.file
     }
 }
