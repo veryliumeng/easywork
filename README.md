@@ -18,3 +18,4 @@ Get easywork chrome extension from chrome store: https://chrome.google.com/webst
 # install native program
 download https://github.com/veryliumeng/easywork/archive/master.zip
 extract and instal native program with install_host.bat.
+
