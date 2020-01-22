@@ -1,10 +1,10 @@
 
 
-Privacy Policy
+## Privacy Policy
 
-  Last updated: December 28, 2019
+  #### Last updated: December 28, 2019
 
-Dasutein (an individual developer) operates the AutoRename Extension. This document informs you of my policy regarding the collection, use and disclosure of Personal Information I receive from users of the extension.
+#Dasutein (an individual developer) operates the AutoRename Extension. This document informs you of my policy regarding the collection, use and disclosure of Personal Information I receive from users of the extension.
 
 Information Collection And Use
 
