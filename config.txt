@@ -1,0 +1,229 @@
+﻿{
+    "auto_upgrade":  true,
+    "case_assign_template":  [
+                                 "Muhammad Zohaib",
+                                 "yun peng",
+                                 "meng liu",
+                                 "chaofeng hui"
+                             ],
+    "case_comment_template":  {
+                                  "default":  "Dear Customer:\n\n\n\nBest Regards\nLiu Meng(刘猛)\nNo. +133 8113 0362"
+                              },
+    "case_pa_template":  {
+                             "Debug Features//DIAG - non AP":  {
+                                                                   "pa1":  "BSP/HLOS",
+                                                                   "pa2":  "Debug Features",
+                                                                   "pa3":  "DIAG - non AP"
+                                                               },
+                             "GERAN//NAS - MM/GMM/SM/SMS":  {
+                                                                "pa1":  "Modem Software",
+                                                                "pa2":  "GERAN",
+                                                                "pa3":  "NAS - MM/GMM/SM/SMS"
+                                                            },
+                             "GERAN//Protocol (GERAN)/Other":  {
+                                                                   "pa1":  "Modem Software",
+                                                                   "pa2":  "GERAN",
+                                                                   "pa3":  "Protocol (GERAN)/Other"
+                                                               },
+                             "IMS//VoLTE":  {
+                                                "pa1":  "Modem Software",
+                                                "pa2":  "IMS",
+                                                "pa3":  "VoLTE"
+                                            },
+                             "LTE//LTE - PDCP/RLC/MAC":  {
+                                                             "pa1":  "Modem Software",
+                                                             "pa2":  "LTE",
+                                                             "pa3":  "LTE - PDCP/RLC/MAC"
+                                                         },
+                             "LTE//NAS - EMM/ESM/SMS":  {
+                                                            "pa1":  "Modem Software",
+                                                            "pa2":  "LTE",
+                                                            "pa3":  "NAS - EMM/ESM/SMS"
+                                                        },
+                             "QMI/RIL/Telephony/Android \u0026 Windows Data//Android Telephony":  {
+                                                                                                      "pa1":  "Modem Software",
+                                                                                                      "pa2":  "QMI/RIL/Telephony/Android \u0026 Windows Data",
+                                                                                                      "pa3":  "Android Telephony"
+                                                                                                  },
+                             "QMI/RIL/Telephony/Android \u0026 Windows Data//QMI":  {
+                                                                                        "pa1":  "Modem Software",
+                                                                                        "pa2":  "QMI/RIL/Telephony/Android \u0026 Windows Data",
+                                                                                        "pa3":  "QMI"
+                                                                                    },
+                             "Stability//Modem Stability":  {
+                                                                "pa1":  "BSP/HLOS",
+                                                                "pa2":  "Stability",
+                                                                "pa3":  "Modem Stability"
+                                                            },
+                             "UIM//GSDI":  {
+                                               "pa1":  "Modem Software",
+                                               "pa2":  "UIM",
+                                               "pa3":  "GSDI"
+                                           },
+                             "UIM//RIL_UIM":  {
+                                                  "pa1":  "Modem Software",
+                                                  "pa2":  "UIM",
+                                                  "pa3":  "RIL_UIM"
+                                              },
+                             "UMTS//Modem Data - Data Path / IPA(Crash/Stall) / Packet Drop":  {
+                                                                                                   "pa1":  "Modem Software",
+                                                                                                   "pa2":  "UMTS",
+                                                                                                   "pa3":  "Modem Data - Data Path / IPA(Crash/Stall) / Packet Drop"
+                                                                                               },
+                             "UMTS//Multimode - Call Manager/System Determination/Policy Manager":  {
+                                                                                                        "pa1":  "Modem Software",
+                                                                                                        "pa2":  "UMTS",
+                                                                                                        "pa3":  "Multimode - Call Manager/System Determination/Policy Manager"
+                                                                                                    },
+                             "LTE//Modem Data - PS call control / ATCOP / ePDG / IPSEC / SSL":  {
+                                                                                                    "pa1":  "Modem Software",
+                                                                                                    "pa2":  "LTE",
+                                                                                                    "pa3":  "Modem Data - PS call control / ATCOP / ePDG / IPSEC / SSL"
+                                                                                                }
+                         },
+    "case_rca_template":  {
+                              "3rd Party - Invalid Card Issue-Mod SW//MultiSIM(MSIM)":  {
+                                                                                            "detail_root_cause":  "3rd Party - Invalid Card Issue-Mod SW",
+                                                                                            "detail_root_cause2":  "MultiSIM(MSIM)",
+                                                                                            "main_root_cause":  "Customer Issue/Bug-Modem SW",
+                                                                                            "rca_team":  "Modem Software",
+                                                                                            "sub_team":  "Modem SW"
+                                                                                        },
+                              "Answer In Existing Document/Solution-Mod SW//MultiSIM(MSIM)":  {
+                                                                                                  "detail_root_cause":  "Answer In Existing Document/Solution-Mod SW",
+                                                                                                  "detail_root_cause2":  "MultiSIM(MSIM)",
+                                                                                                  "main_root_cause":  "Documentation-Modem SW",
+                                                                                                  "rca_team":  "Modem Software",
+                                                                                                  "sub_team":  "Modem SW"
+                                                                                              },
+                              "Cannot Reproduce Issue-Mod SW//MultiSIM(MSIM)":  {
+                                                                                    "detail_root_cause":  "Cannot Reproduce Issue-Mod SW",
+                                                                                    "detail_root_cause2":  "MultiSIM(MSIM)",
+                                                                                    "main_root_cause":  "Customer Issue/Bug-Modem SW",
+                                                                                    "rca_team":  "Modem Software",
+                                                                                    "sub_team":  "Modem SW"
+                                                                                },
+                              "Configuration Issue-Mod SW//MultiSIM(MSIM)":  {
+                                                                                 "detail_root_cause":  "Configuration Issue-Mod SW",
+                                                                                 "detail_root_cause2":  "MultiSIM(MSIM)",
+                                                                                 "main_root_cause":  "Customer Issue/Bug-Modem SW",
+                                                                                 "rca_team":  "Modem Software",
+                                                                                 "sub_team":  "Modem SW"
+                                                                             },
+                              "Existing CR (CR Propagation Issue)-Mod SW//MultiSIM(MSIM)":  {
+                                                                                                "detail_root_cause":  "Existing CR (CR Propagation Issue)-Mod SW",
+                                                                                                "detail_root_cause2":  "MultiSIM(MSIM)",
+                                                                                                "main_root_cause":  "Qualcomm Issue/Bug-Modem SW",
+                                                                                                "rca_team":  "Modem Software",
+                                                                                                "sub_team":  "Modem SW"
+                                                                                            },
+                              "Existing CR (CR Propagation Issue)-Mod SW//Non-MultiSIM":  {
+                                                                                              "detail_root_cause":  "Existing CR (CR Propagation Issue)-Mod SW",
+                                                                                              "detail_root_cause2":  "Non-MultiSIM",
+                                                                                              "main_root_cause":  "Qualcomm Issue/Bug-Modem SW",
+                                                                                              "rca_team":  "Modem Software",
+                                                                                              "sub_team":  "Modem SW"
+                                                                                          },
+                              "Expected UE Behavior-Mod SW//MultiSIM(MSIM)":  {
+                                                                                  "detail_root_cause":  "Expected UE Behavior-Mod SW",
+                                                                                  "detail_root_cause2":  "MultiSIM(MSIM)",
+                                                                                  "main_root_cause":  "Customer Issue/Bug-Modem SW",
+                                                                                  "rca_team":  "Modem Software",
+                                                                                  "sub_team":  "Modem SW"
+                                                                              },
+                              "Network Issue-Mod SW//No UE Solution - Clarified through Tech Memo":  {
+                                                                                                         "detail_root_cause":  "Network Issue-Mod SW",
+                                                                                                         "detail_root_cause2":  "No UE Solution - Clarified through Tech Memo",
+                                                                                                         "main_root_cause":  "Customer Issue/Bug-Modem SW",
+                                                                                                         "rca_team":  "Modem Software",
+                                                                                                         "sub_team":  "Modem SW"
+                                                                                                     },
+                              "OEM Application Issue-Mod SW//MultiSIM(MSIM)":  {
+                                                                                   "detail_root_cause":  "OEM Application Issue-Mod SW",
+                                                                                   "detail_root_cause2":  "MultiSIM(MSIM)",
+                                                                                   "main_root_cause":  "Customer Issue/Bug-Modem SW",
+                                                                                   "rca_team":  "Modem Software",
+                                                                                   "sub_team":  "Modem SW"
+                                                                               },
+                              "OEM Code Changes-Mod SW//MultiSIM(MSIM)":  {
+                                                                              "detail_root_cause":  "OEM Code Changes-Mod SW",
+                                                                              "detail_root_cause2":  "MultiSIM(MSIM)",
+                                                                              "main_root_cause":  "Customer Issue/Bug-Modem SW",
+                                                                              "rca_team":  "Modem Software",
+                                                                              "sub_team":  "Modem SW"
+                                                                          },
+                              "OEM closed with no explanation//No QC Action Item Identified to Avoid similar cases in future":  {
+                                                                                                                                    "detail_root_cause":  "OEM closed with no explanation",
+                                                                                                                                    "detail_root_cause2":  "No QC Action Item Identified to Avoid similar cases in future",
+                                                                                                                                    "main_root_cause":  "Closed - No Customer Response",
+                                                                                                                                    "rca_team":  "Modem Software",
+                                                                                                                                    "sub_team":  "Modem SW"
+                                                                                                                                },
+                              "Questions/Clarifications on Implementation-Mod SW//MultiSIM(MSIM)":  {
+                                                                                                        "detail_root_cause":  "Questions/Clarifications on Implementation-Mod SW",
+                                                                                                        "detail_root_cause2":  "MultiSIM(MSIM)",
+                                                                                                        "main_root_cause":  "Query-Modem SW",
+                                                                                                        "rca_team":  "Modem Software",
+                                                                                                        "sub_team":  "Modem SW"
+                                                                                                    },
+                              "Software Integration Issue-Mod SW//MultiSIM(MSIM)":  {
+                                                                                        "detail_root_cause":  "Software Integration Issue-Mod SW",
+                                                                                        "detail_root_cause2":  "MultiSIM(MSIM)",
+                                                                                        "main_root_cause":  "Customer Issue/Bug-Modem SW",
+                                                                                        "rca_team":  "Modem Software",
+                                                                                        "sub_team":  "Modem SW"
+                                                                                    },
+                              "Test Execution Error/Wrong Test Procedure-Mod SW//MultiSIM(MSIM)":  {
+                                                                                                       "detail_root_cause":  "Test Execution Error/Wrong Test Procedure-Mod SW",
+                                                                                                       "detail_root_cause2":  "MultiSIM(MSIM)",
+                                                                                                       "main_root_cause":  "Customer Issue/Bug-Modem SW",
+                                                                                                       "rca_team":  "Modem Software",
+                                                                                                       "sub_team":  "Modem SW"
+                                                                                                   },
+                              "Test Execution Error/Wrong Test Procedure-Mod SW//Non-MultiSIM":  {
+                                                                                                     "detail_root_cause":  "Test Execution Error/Wrong Test Procedure-Mod SW",
+                                                                                                     "detail_root_cause2":  "Non-MultiSIM",
+                                                                                                     "main_root_cause":  "Customer Issue/Bug-Modem SW",
+                                                                                                     "rca_team":  "Modem Software",
+                                                                                                     "sub_team":  "Modem SW"
+                                                                                                 },
+                              "Customer How-To/Why Queries-Mod SW//MultiSIM(MSIM)":  {
+                                                                                         "rca_team":  "Modem Software",
+                                                                                         "sub_team":  "Modem SW",
+                                                                                         "main_root_cause":  "Query-Modem SW",
+                                                                                         "detail_root_cause":  "Customer How-To/Why Queries-Mod SW",
+                                                                                         "detail_root_cause2":  "MultiSIM(MSIM)"
+                                                                                     }
+                          },
+    "case_status_color":  {
+                              "Answer Given-Awaiting Feedback":  "Moccasin",
+                              "Closed":  "Silver",
+                              "Closed-Customer Requested":  "Silver",
+                              "Closed-Pending Your Approval":  "#E5E4E2",
+                              "Customer Updated Case":  "Yellow",
+                              "Hold-Customer Information Required":  "Cyan",
+                              "Hold-Pending Action Item":  "PowderBlue",
+                              "Hold-Pending Change Request":  "#6960EC",
+                              "Open":  "Red",
+                              "Research-General":  "CornflowerBlue",
+                              "Research-Internal Support":  "DeepSkyBlue",
+                              "Research-Replicating in Lab":  "Lime"
+                          },
+    "chrome_download_path":  "C:\\Users\\liumeng\\Downloads",
+    "close_case_after_update":  false,
+    "create_case_folder_under_oem_name":  false,
+    "create_folder_for_cases":  true,
+    "open_case_in_new_tab":  false,
+    "relative_log_directory":  "case",
+    "save_all_comment_history":  true,
+    "remote_case_folder":  "\\\\wine\\china_ce\\Modem\\liumeng",
+    "create_case_folder_under_chipset":  true,
+    "relative_path":  [
+                          "case",
+                          ":oem",
+                          ":chip",
+                          "",
+                          ":chip"
+                      ],
+    "shared_path":  ""
+}

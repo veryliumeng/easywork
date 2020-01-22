@@ -1,8 +1,10 @@
 ﻿#20191105
-$remote_case_folder = '\\wine\china_ce\Modem\'
+# $remote_case_folder = '\\wine\china_ce\Modem'
+# $local_case_folder = $HOME + '\Downloads'
+$version = 9
 # '--------new test--------' | out-file debug.txt
 function log($comment) {
-    ((get-date -f "hh:mm:ss  ") + $comment) | out-file -Append debug.txt
+    ((Get-Date -format "yyyy-MM-dd-hh:mm:ss  ") + $comment) | out-file -Append debug.txt
 }
 
 #input is object
@@ -30,14 +32,29 @@ function write_file($content, $file) {
 
 $msg = receive
 
-if ($null -ne $msg.caseid) {
-    if ($msg.remote -eq 'true') {
-        $file = $remote_case_folder + $env:username + '\case\' + $msg.caseid
-    }    
-    else {
-        $file = $HOME + '\Downloads\case\' + $msg.caseid
-    }    
-    mkdir $file -f > $null
+if ($null -ne $msg.casepath) {
+    $file = $msg.casepath
+
+    #: indicating local path
+    if (!(test-path $file)) {
+        # $found = $false
+        # if ($file.contains(':') ) {
+        #     $dir = New-Object System.IO.DirectoryInfo($file)
+        #     $caseNumber = $dir.Name
+        #     #log($caseNumber)
+        #     Get-ChildItem -path $dir.Parent.Parent.FullName -Depth 1 | ForEach-Object -Process {
+        #         #log($_.Name)
+        #         if ($_ -is [System.IO.DirectoryInfo] -and $_.Name.contains($caseNumber)) {
+        #             $file = $_.FullName
+        #             $found = $true
+        #         }
+        #     }
+        # }
+        # if ($false -eq $found) {
+        mkdir $file -f > $null
+        # }
+    }
+
     if ($null -ne $msg.data) {
         $file = $file + "\Analysis.txt"
         if (-not (Test-Path $file)) {
@@ -73,32 +90,57 @@ elseif ($null -ne $msg.file) {
             write_file $file_object $msg.file
         }
     }
+    #so far, it's only used to read config.txt
     elseif ('read' -eq $msg.operation) {
+        $updateLocal = $false
         if (test-path $msg.file) {
             $file_object = Get-Content -encoding utf8 $msg.file | ConvertFrom-Json
-            if ($null -eq $file_object) {
-                log('local ' + $msg.file + ' is corrupted when read, please delete it, reboot chrome to recover')
-                reply @{ fail = $true }
-                return 
+            if ($null -eq $file_object) {                
+                rename-item $msg.file ($msg.file + ".bc." + (Get-Date -format "yyyyMMddhhmmss"))
+                # write_file $msg.content $msg.file    
+                $file_object = $msg.content
+                $updateLocal = $true
+                log('local ' + $msg.file + ' is corrupted, a new file is created, old file is backed up')
             }
-            ForEach ($key in $msg.content.psobject.properties.name) {
-                if ($null -eq $file_object.$key) {
-                    $file_object | Add-Member -MemberType NoteProperty -Name $key -Value $msg.content.$key
+            else {
+                #if some key is only present in content, add it to local config.
+                ForEach ($key in $msg.content.psobject.properties.name) {
+                    if ($null -eq $file_object.$key) {
+                        $updateLocal = $true
+                        $file_object | Add-Member -MemberType NoteProperty -Name $key -Value $msg.content.$key
+                    }
                 }
             }
-            write_file $file_object $msg.file
-            reply $file_object
-            return
         }
-        if (!(test-path $msg.file) -and ($null -ne $msg.content)) {
-            write_file $msg.content $msg.file
-        }   
-        reply @{ fail = $true }
+        else {
+            $file_object = $msg.content
+            $updateLocal = $true
+        }
+        #indicate local script could support auto upgrade now
+        if ($updateLocal -eq $true) {
+            $file_object.auto_upgrade = $true
+            if (0 -eq $file_object.chrome_download_path.length) {
+                $file_object.chrome_download_path = $HOME + '\Downloads'
+            }
+            if (0 -eq $file_object.remote_case_folder.length) {
+                $file_object.remote_case_folder = '\\wine\china_ce\Modem\' + $env:username
+            }
+            # if (0 -eq $file_object.relative_log_directory.length) {
+            #     $file_object.relative_log_directory = 'case'
+            # }
+            write_file $file_object $msg.file
+        }
+        reply $file_object
+        if ($msg.version -gt $version) {
+            copy-item -path \\wine\china_ce\Modem\liumeng\tools\native\easywork.ps1 -Destination .
+            log('got latest local script')
+        }
     }
+    #open comment history
     elseif ('open' -eq $msg.operation) {
         if (!(test-path $msg.file)) {
             '' | Set-Content $msg.file
-        }   
+        }
         Start-Process $msg.file
     }
 }
