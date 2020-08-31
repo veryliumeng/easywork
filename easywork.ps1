@@ -1,8 +1,8 @@
 ﻿#20191105
 # $remote_case_folder = '\\wine\china_ce\Modem'
 # $local_case_folder = $HOME + '\Downloads'
-$version = 9
-# '--------new test--------' | out-file debug.txt
+$version = 10
+#'--------new test--------' | out-file debug.txt
 function log($comment) {
     ((Get-Date -format "yyyy-MM-dd-hh:mm:ss  ") + $comment) | out-file -Append debug.txt
 }
@@ -32,6 +32,7 @@ function write_file($content, $file) {
 
 $msg = receive
 
+#to open folder or create analysis file
 if ($null -ne $msg.casepath) {
     $file = $msg.casepath
 
@@ -63,6 +64,7 @@ if ($null -ne $msg.casepath) {
     }
     Start-Process $file
 }
+#to read/write text file
 elseif ($null -ne $msg.file) {
     if ('write' -eq $msg.operation ) {
 
@@ -143,4 +145,15 @@ elseif ($null -ne $msg.file) {
         }
         Start-Process $msg.file
     }
+}
+elseif ($null -ne $msg.findmail) {
+    log($msg.findmail)
+    $content = $msg.findmail
+    $outlook = [Runtime.InteropServices.Marshal]::GetActiveObject("Outlook.Application") 
+    $outlook.ActiveWindow().Activate()
+    $myexploerer = $outlook.ActiveExplorer()
+    $myexploerer.CurrentFolder =$outlook.GetNamespace("MAPI").GetDefaultFolder(6) 
+    $myexploerer.Search($content,1)
+    $myexploerer.Display()
+    (New-Object -ComObject WScript.Shell).AppActivate((get-process outlook).MainWindowTitle)
 }
