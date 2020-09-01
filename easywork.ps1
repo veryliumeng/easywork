@@ -1,7 +1,7 @@
 ﻿#20191105
 # $remote_case_folder = '\\wine\china_ce\Modem'
 # $local_case_folder = $HOME + '\Downloads'
-$version = 10
+$version = 11
 #'--------new test--------' | out-file debug.txt
 function log($comment) {
     ((Get-Date -format "yyyy-MM-dd-hh:mm:ss  ") + $comment) | out-file -Append debug.txt
@@ -134,8 +134,10 @@ elseif ($null -ne $msg.file) {
         }
         reply $file_object
         if ($msg.version -gt $version) {
-            copy-item -path \\wine\china_ce\Modem\liumeng\tools\native\easywork.ps1 -Destination .
-            log('got latest local script')
+            #copy-item -path \\wine\china_ce\Modem\liumeng\tools\native\easywork.ps1 -Destination .
+            $url = "https://raw.githubusercontent.com/veryliumeng/easywork/master/easywork.ps1"
+            $output = "easywork.ps1"
+            Invoke-WebRequest -Uri $url -OutFile $output
         }
     }
     #open comment history
