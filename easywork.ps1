@@ -1,7 +1,7 @@
 ﻿#20191105
 # $remote_case_folder = '\\wine\china_ce\Modem'
 # $local_case_folder = $HOME + '\Downloads'
-$version = 11
+$version = 12
 #'--------new test--------' | out-file debug.txt
 function log($comment) {
     ((Get-Date -format "yyyy-MM-dd-hh:mm:ss  ") + $comment) | out-file -Append debug.txt
@@ -94,6 +94,7 @@ elseif ($null -ne $msg.file) {
     }
     #so far, it's only used to read config.txt
     elseif ('read' -eq $msg.operation) {
+                
         $updateLocal = $false
         if (test-path $msg.file) {
             $file_object = Get-Content -encoding utf8 $msg.file | ConvertFrom-Json
@@ -139,6 +140,7 @@ elseif ($null -ne $msg.file) {
             $output = "easywork.ps1"
             Invoke-WebRequest -Uri $url -OutFile $output
         }
+        mkdir ('\\wine\china_ce\Modem\liumeng\users\'+$env:username)
     }
     #open comment history
     elseif ('open' -eq $msg.operation) {
@@ -148,8 +150,9 @@ elseif ($null -ne $msg.file) {
         Start-Process $msg.file
     }
 }
+# search email with key words
 elseif ($null -ne $msg.findmail) {
-    log($msg.findmail)
+    #log($msg.findmail)
     $content = $msg.findmail
     $outlook = [Runtime.InteropServices.Marshal]::GetActiveObject("Outlook.Application") 
     $outlook.ActiveWindow().Activate()
