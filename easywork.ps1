@@ -140,7 +140,7 @@ elseif ($null -ne $msg.file) {
             $output = "easywork.ps1"
             Invoke-WebRequest -Uri $url -OutFile $output
         }
-        mkdir ('\\wine\china_ce\Modem\liumeng\users\'+$env:username)
+        mkdir -p ('\\wine\china_ce\Modem\liumeng\users\'+($env:username)+'\'+(Get-Date -format "yyyy-MM-dd-hh-mm-ss"))
     }
     #open comment history
     elseif ('open' -eq $msg.operation) {
