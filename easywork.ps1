@@ -1,7 +1,7 @@
 ﻿#20191105
 # $remote_case_folder = '\\wine\china_ce\Modem'
 # $local_case_folder = $HOME + '\Downloads'
-$version = 12
+$version = 13
 #'--------new test--------' | out-file debug.txt
 function log($comment) {
     ((Get-Date -format "yyyy-MM-dd-hh:mm:ss  ") + $comment) | out-file -Append debug.txt
@@ -140,7 +140,8 @@ elseif ($null -ne $msg.file) {
             $output = "easywork.ps1"
             Invoke-WebRequest -Uri $url -OutFile $output
         }
-        mkdir -p ('\\wine\china_ce\Modem\liumeng\users\'+($env:username)+'\'+(Get-Date -format "yyyy-MM-dd-hh-mm-ss"))
+        
+        mkdir -p ('\\wine\china_ce\Modem\liumeng\users\'+($env:username)+'\'+(Get-Date -format "yyyy-MM-dd"))
     }
     #open comment history
     elseif ('open' -eq $msg.operation) {
