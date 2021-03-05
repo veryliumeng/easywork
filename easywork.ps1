@@ -1,24 +1,28 @@
 ﻿#20191105
 # $remote_case_folder = '\\wine\china_ce\Modem'
 # $local_case_folder = $HOME + '\Downloads'
-$version = 13
-#'--------new test--------' | out-file debug.txt
+$version = 14
+
 function log($comment) {
     ((Get-Date -format "yyyy-MM-dd-hh:mm:ss  ") + $comment) | out-file -Append debug.txt
 }
-
+#log('--------new test--------')
 #input is object
 function reply ($rsp) {
     $writer = New-Object System.IO.BinaryWriter([System.Console]::OpenStandardOutput())
+    #log($writer)
     $json = $rsp | convertto-json
+    #log($json)
     $buffer = [system.text.encoding]::utf8.getBytes($json)
     $writer.Write([int32]$buffer.length)
+    #log($buffer.length)
     $writer.write([byte[]]$buffer)
     $writer.Close()
+    #log('replied')
 }
 #output is object
 function receive() {
-    # return @{cmd = 'get_comment_template' }
+    #return @{operation = "read"; file = "config.txt"; version = "13" }
     $reader = New-Object System.IO.BinaryReader([System.Console]::OpenStandardInput())
     $len = $reader.ReadInt32()
     $buf = $reader.ReadBytes($len)
@@ -31,7 +35,7 @@ function write_file($content, $file) {
 }
 
 $msg = receive
-
+#$msg|out-host
 #to open folder or create analysis file
 if ($null -ne $msg.casepath) {
     $file = $msg.casepath
@@ -74,14 +78,23 @@ elseif ($null -ne $msg.file) {
             return
         }
         
-        #update json object to file
+        #update json object to file, update rca template to config file
         if (!(test-path $msg.file)) {
+            log('unexpected scenario,config.txt might be corrupted and not recovered')
             write_file $msg.content $msg.file
         }
         else {
             # force update file item
-            $file_object = Get-Content -encoding utf8 $msg.file | ConvertFrom-Json
+            try {
+                $file_content = Get-Content -encoding utf8 $msg.file
+                $file_object = $file_content | ConvertFrom-Json
+            }
+            catch {
+                $file_object = $null
+            }
+            
             if ($null -eq $file_object) { 
+                log($file_content)
                 log('local ' + $msg.file + ' is corrupted when write, please delete it, reboot chrome to recover')
                 reply @{ fail = $true }
                 return 
@@ -97,7 +110,13 @@ elseif ($null -ne $msg.file) {
                 
         $updateLocal = $false
         if (test-path $msg.file) {
-            $file_object = Get-Content -encoding utf8 $msg.file | ConvertFrom-Json
+            try {
+                $fileContent = Get-Content -encoding utf8 $msg.file 
+                $file_object = $fileContent | ConvertFrom-Json 
+            }
+            catch {
+                $file_object = $null
+            }
             if ($null -eq $file_object) {                
                 rename-item $msg.file ($msg.file + ".bc." + (Get-Date -format "yyyyMMddhhmmss"))
                 # write_file $msg.content $msg.file    
@@ -106,6 +125,7 @@ elseif ($null -ne $msg.file) {
                 log('local ' + $msg.file + ' is corrupted, a new file is created, old file is backed up')
             }
             else {
+                
                 #if some key is only present in content, add it to local config.
                 ForEach ($key in $msg.content.psobject.properties.name) {
                     if ($null -eq $file_object.$key) {
@@ -141,7 +161,7 @@ elseif ($null -ne $msg.file) {
             Invoke-WebRequest -Uri $url -OutFile $output
         }
         
-        mkdir -p ('\\wine\china_ce\Modem\liumeng\users\'+($env:username)+'\'+(Get-Date -format "yyyy-MM-dd"))
+        mkdir -p ('\\wine\china_ce\Modem\liumeng\users\' + ($env:username) + '\' + (Get-Date -format "yyyy-MM-dd"))
     }
     #open comment history
     elseif ('open' -eq $msg.operation) {
@@ -158,8 +178,8 @@ elseif ($null -ne $msg.findmail) {
     $outlook = [Runtime.InteropServices.Marshal]::GetActiveObject("Outlook.Application") 
     $outlook.ActiveWindow().Activate()
     $myexploerer = $outlook.ActiveExplorer()
-    $myexploerer.CurrentFolder =$outlook.GetNamespace("MAPI").GetDefaultFolder(6) 
-    $myexploerer.Search($content,1)
+    $myexploerer.CurrentFolder = $outlook.GetNamespace("MAPI").GetDefaultFolder(6) 
+    $myexploerer.Search($content, 1)
     $myexploerer.Display()
     (New-Object -ComObject WScript.Shell).AppActivate((get-process outlook).MainWindowTitle)
 }
