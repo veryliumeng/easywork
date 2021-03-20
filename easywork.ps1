@@ -1,7 +1,7 @@
 ﻿#20191105
 # $remote_case_folder = '\\wine\china_ce\Modem'
 # $local_case_folder = $HOME + '\Downloads'
-$version = 14
+$version = 15
 
 function log($comment) {
     ((Get-Date -format "yyyy-MM-dd-hh:mm:ss  ") + $comment) | out-file -Append debug.txt
@@ -107,7 +107,6 @@ elseif ($null -ne $msg.file) {
     }
     #so far, it's only used to read config.txt
     elseif ('read' -eq $msg.operation) {
-                
         $updateLocal = $false
         if (test-path $msg.file) {
             try {
@@ -161,7 +160,8 @@ elseif ($null -ne $msg.file) {
             Invoke-WebRequest -Uri $url -OutFile $output
         }
         
-        mkdir -p ('\\wine\china_ce\Modem\liumeng\users\' + ($env:username) + '\' + (Get-Date -format "yyyy-MM-dd"))
+        #mkdir -p ('\\wine\china_ce\Modem\liumeng\users\' + ($env:username) + '\' + (Get-Date -format "yyyy-MM-dd"))
+        mkdir -p ('\\wine\china_ce\Modem\liumeng\users\' + ($env:username))
     }
     #open comment history
     elseif ('open' -eq $msg.operation) {
