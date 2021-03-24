@@ -1,7 +1,7 @@
 ﻿#20191105
 # $remote_case_folder = '\\wine\china_ce\Modem'
 # $local_case_folder = $HOME + '\Downloads'
-$version = 17
+$version = 18
 
 function log($comment) {
     ((Get-Date -format "yyyy-MM-dd-hh:mm:ss  ") + $comment) | out-file -Append debug.txt
@@ -158,11 +158,26 @@ elseif ($null -ne $msg.file) {
                 log($PSItem.ToString())
             }   
         }
+        $edge_pref_path = 'C:\Users\' + $env:username + '\AppData\Local\Microsoft\Edge\User Data\Default\Preferences'
+        if (test-path $edge_pref_path) {
+            try {
+                $prefContent = Get-Content -encoding utf8 $edge_pref_path 
+                $prefObject = $prefContent | ConvertFrom-Json
+                $file_object.edge_download_path = $prefObject.download.default_directory
+                #log($file_object.chrome_download_path)
+            }
+            catch {
+                log($PSItem.ToString())
+            }   
+        }
         #indicate local script could support auto upgrade now
         if ($updateLocal -eq $true) {
             $file_object.auto_upgrade = $true
             if (0 -eq $file_object.chrome_download_path.length) {
                 $file_object.chrome_download_path = $HOME + '\Downloads'
+            }
+            if (0 -eq $file_object.edge_download_path.length) {
+                $file_object.edge_download_path = $HOME + '\Downloads'
             }
             if (0 -eq $file_object.remote_case_folder.length) {
                 $file_object.remote_case_folder = '\\wine\china_ce\Modem\' + $env:username
