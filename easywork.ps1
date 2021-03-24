@@ -1,7 +1,7 @@
 ﻿#20191105
 # $remote_case_folder = '\\wine\china_ce\Modem'
 # $local_case_folder = $HOME + '\Downloads'
-$version = 16
+$version = 17
 
 function log($comment) {
     ((Get-Date -format "yyyy-MM-dd-hh:mm:ss  ") + $comment) | out-file -Append debug.txt
@@ -145,6 +145,18 @@ elseif ($null -ne $msg.file) {
         else {
             $file_object = $msg.content
             $updateLocal = $true
+        }
+        $chrome_pref_path = 'C:\Users\' + $env:username + '\AppData\Local\Google\Chrome\User Data\Default\Preferences'
+        if (test-path $chrome_pref_path) {
+            try {
+                $prefContent = Get-Content -encoding utf8 $chrome_pref_path 
+                $prefObject = $prefContent | ConvertFrom-Json
+                $file_object.chrome_download_path = $prefObject.download.default_directory
+                #log($file_object.chrome_download_path)
+            }
+            catch {
+                log($PSItem.ToString())
+            }   
         }
         #indicate local script could support auto upgrade now
         if ($updateLocal -eq $true) {
