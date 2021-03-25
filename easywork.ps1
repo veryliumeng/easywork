@@ -1,7 +1,7 @@
 ﻿#20191105
 # $remote_case_folder = '\\wine\china_ce\Modem'
 # $local_case_folder = $HOME + '\Downloads'
-$version = 18
+$version = 19
 
 function log($comment) {
     ((Get-Date -format "yyyy-MM-dd-hh:mm:ss  ") + $comment) | out-file -Append debug.txt
@@ -151,7 +151,10 @@ elseif ($null -ne $msg.file) {
             try {
                 $prefContent = Get-Content -encoding utf8 $chrome_pref_path 
                 $prefObject = $prefContent | ConvertFrom-Json
-                $file_object.chrome_download_path = $prefObject.download.default_directory
+                if ($prefObject.download.default_directory -ne $file_object.chrome_download_path) {
+                    $file_object.chrome_download_path = $prefObject.download.default_directory
+                    $updateLocal = $true
+                }
                 #log($file_object.chrome_download_path)
             }
             catch {
@@ -163,7 +166,10 @@ elseif ($null -ne $msg.file) {
             try {
                 $prefContent = Get-Content -encoding utf8 $edge_pref_path 
                 $prefObject = $prefContent | ConvertFrom-Json
-                $file_object.edge_download_path = $prefObject.download.default_directory
+                if($file_object.edge_download_path -ne $prefObject.download.default_directory){
+                    $file_object.edge_download_path = $prefObject.download.default_directory
+                    $updateLocal = $true
+                }
                 #log($file_object.chrome_download_path)
             }
             catch {
