@@ -1,7 +1,7 @@
 ﻿#20191105
 # $remote_case_folder = '\\wine\china_ce\Modem'
 # $local_case_folder = $HOME + '\Downloads'
-$version = 20
+$version = 21
 
 function log($comment) {
     ((Get-Date -format "yyyy-MM-dd-hh:mm:ss  ") + $comment) | out-file -Append debug.txt
@@ -132,7 +132,7 @@ elseif ($null -ne $msg.file) {
                         $file_object | Add-Member -MemberType NoteProperty -Name $key -Value $msg.content.$key
                     }
                 }
-                # if some key is absent present in content, remove it in local config
+                # if some key is absent in content, remove it in local config
                 ForEach ($key in $file_object.psobject.properties.name) {
                     if ($null -eq $msg.content.$key) {
                         $updateLocal = $true
@@ -202,7 +202,7 @@ elseif ($null -ne $msg.file) {
         }
         
         #mkdir -p ('\\wine\china_ce\Modem\liumeng\users\' + ($env:username) + '\' + (Get-Date -format "yyyy-MM-dd"))
-        mkdir -p ('\\wine\china_ce\Modem\liumeng\users\' + ($env:username))
+        # mkdir -p ('\\wine\china_ce\Modem\liumeng\users\' + ($env:username))
     }
     #open comment history
     elseif ('open' -eq $msg.operation) {
