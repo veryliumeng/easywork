@@ -1,7 +1,7 @@
 ﻿#20191105
 # $remote_case_folder = '\\wine\china_ce\Modem'
 # $local_case_folder = $HOME + '\Downloads'
-$version = 21
+$version = 22
 
 function log($comment) {
     ((Get-Date -format "yyyy-MM-dd-hh:mm:ss  ") + $comment) | out-file -Append debug.txt
@@ -110,6 +110,7 @@ elseif ($null -ne $msg.file) {
         $updateLocal = $false
         if (test-path $msg.file) {
             try {
+                # if honor key in config.txt
                 $fileContent = Get-Content -encoding utf8 $msg.file 
                 $file_object = $fileContent | ConvertFrom-Json 
             }
@@ -124,7 +125,6 @@ elseif ($null -ne $msg.file) {
                 log('local ' + $msg.file + ' is corrupted, a new file is created, old file is backed up')
             }
             else {
-                
                 #if some key is only present in content, add it to local config.
                 ForEach ($key in $msg.content.psobject.properties.name) {
                     if ($null -eq $file_object.$key) {
@@ -146,53 +146,53 @@ elseif ($null -ne $msg.file) {
             $file_object = $msg.content
             $updateLocal = $true
         }
+        if ($updateLocal -eq $true) {
+            write_file $file_object $msg.file
+        }
+
+        #correct auto_upgrade, following value is always wrong in config.txt, does not matter
+        $file_object.auto_upgrade = $true
+
+        #correct remote_case_folder
+        if (0 -eq $msg.content.remote_case_folder.length) {
+            $file_object.remote_case_folder = '\\wine\china_ce\Modem\' + $env:username
+        }
+        else {
+            $file_object.remote_case_folder = $msg.content.remote_case_folder
+        }
+        
+        #correct chrome_download_path
+        $file_object.chrome_download_path = $HOME + '\Downloads'       
         $chrome_pref_path = 'C:\Users\' + $env:username + '\AppData\Local\Google\Chrome\User Data\Default\Preferences'
-        # $chrome_pref_path = 'Preferences'
         if (test-path $chrome_pref_path) {
             try {
                 $prefContent = Get-Content -encoding utf8 $chrome_pref_path 
                 $prefObject = $prefContent | ConvertFrom-Json
-                if (($prefObject.download.default_directory -ne $file_object.chrome_download_path) -and ($null -ne $prefObject.download ) -and ($null -ne $prefObject.download.default_directory )) {
+                if ( ($null -ne $prefObject.download ) -and ($null -ne $prefObject.download.default_directory ) ) {
                     $file_object.chrome_download_path = $prefObject.download.default_directory
-                    $updateLocal = $true
                 }
             }
             catch {
                 log($PSItem.ToString())
             }   
         }
+
+        #correct edge_download_path
+        $file_object.edge_download_path = $HOME + '\Downloads'
         $edge_pref_path = 'C:\Users\' + $env:username + '\AppData\Local\Microsoft\Edge\User Data\Default\Preferences'
         if (test-path $edge_pref_path) {
             try {
                 $prefContent = Get-Content -encoding utf8 $edge_pref_path 
                 $prefObject = $prefContent | ConvertFrom-Json
-                if (($file_object.edge_download_path -ne $prefObject.download.default_directory) -and ($null -ne $prefObject.download ) -and ($null -ne $prefObject.download.default_directory  )) {
+                if (($null -ne $prefObject.download ) -and ($null -ne $prefObject.download.default_directory  ) ) {
                     $file_object.edge_download_path = $prefObject.download.default_directory
-                    $updateLocal = $true
                 }
-                #log($file_object.chrome_download_path)
             }
             catch {
                 log($PSItem.ToString())
             }   
         }
-        #indicate local script could support auto upgrade now
-        if ($updateLocal -eq $true) {
-            $file_object.auto_upgrade = $true
-            if (0 -eq $file_object.chrome_download_path.length) {
-                $file_object.chrome_download_path = $HOME + '\Downloads'
-            }
-            if (0 -eq $file_object.edge_download_path.length) {
-                $file_object.edge_download_path = $HOME + '\Downloads'
-            }
-            if (0 -eq $file_object.remote_case_folder.length) {
-                $file_object.remote_case_folder = '\\wine\china_ce\Modem\' + $env:username
-            }
-            # if (0 -eq $file_object.relative_log_directory.length) {
-            #     $file_object.relative_log_directory = 'case'
-            # }
-            write_file $file_object $msg.file
-        }
+        
         reply $file_object
         if ($msg.version -gt $version) {
             #copy-item -path \\wine\china_ce\Modem\liumeng\tools\native\easywork.ps1 -Destination .
@@ -200,9 +200,7 @@ elseif ($null -ne $msg.file) {
             $output = "easywork.ps1"
             Invoke-WebRequest -Uri $url -OutFile $output
         }
-        
         #mkdir -p ('\\wine\china_ce\Modem\liumeng\users\' + ($env:username) + '\' + (Get-Date -format "yyyy-MM-dd"))
-        # mkdir -p ('\\wine\china_ce\Modem\liumeng\users\' + ($env:username))
     }
     #open comment history
     elseif ('open' -eq $msg.operation) {
