@@ -1,7 +1,7 @@
 ﻿#20191105
 # $remote_case_folder = '\\wine\china_ce\Modem'
 # $local_case_folder = $HOME + '\Downloads'
-$version = 22
+$version = 23
 
 function log($comment) {
     ((Get-Date -format "yyyy-MM-dd-hh:mm:ss  ") + $comment) | out-file -Append debug.txt
@@ -162,8 +162,9 @@ elseif ($null -ne $msg.file) {
         }
         
         #correct chrome_download_path
-        $file_object.chrome_download_path = $HOME + '\Downloads'       
-        $chrome_pref_path = 'C:\Users\' + $env:username + '\AppData\Local\Google\Chrome\User Data\Default\Preferences'
+        $file_object.chrome_download_path = $env:userprofile + '\Downloads'       
+        $chrome_pref_path = $env:localappdata + '\Google\Chrome\User Data\Default\Preferences'
+
         if (test-path $chrome_pref_path) {
             try {
                 $prefContent = Get-Content -encoding utf8 $chrome_pref_path 
@@ -178,8 +179,8 @@ elseif ($null -ne $msg.file) {
         }
 
         #correct edge_download_path
-        $file_object.edge_download_path = $HOME + '\Downloads'
-        $edge_pref_path = 'C:\Users\' + $env:username + '\AppData\Local\Microsoft\Edge\User Data\Default\Preferences'
+        $file_object.edge_download_path = $env:userprofile + '\Downloads'
+        $edge_pref_path = $env:localappdata + '\Microsoft\Edge\User Data\Default\Preferences'
         if (test-path $edge_pref_path) {
             try {
                 $prefContent = Get-Content -encoding utf8 $edge_pref_path 
