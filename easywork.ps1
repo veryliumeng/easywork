@@ -1,12 +1,22 @@
 ﻿#20191105
-# $remote_case_folder = '\\wine\china_ce\Modem'
-# $local_case_folder = $HOME + '\Downloads'
-$version = 23
+$version = 25
+
+#0 to disable debug, 1 to enable log only, 2 to use fixed request
+$debug=0
 
 function log($comment) {
-    ((Get-Date -format "yyyy-MM-dd-hh:mm:ss  ") + $comment) | out-file -Append debug.txt
+    if($debug -ne 0){
+        ((Get-Date -format "yyyy-MM-dd-hh:mm:ss  ") + $comment) | out-file -Append $PSScriptRoot'\debug.txt'
+         #($comment -is [object])|out-host
+        if($comment -is [psobject]){
+            $comment |ConvertTo-Json| out-file -Append $PSScriptRoot'\debug.txt'
+        }
+    }
 }
-#log('--------new test--------')
+if($debug -ne 0){
+  log('--------new test--------')
+}
+
 #input is object
 function reply ($rsp) {
     $writer = New-Object System.IO.BinaryWriter([System.Console]::OpenStandardOutput())
@@ -22,7 +32,10 @@ function reply ($rsp) {
 }
 #output is object
 function receive() {
-    #return @{operation = "read"; file = "config.txt"; version = "13" }
+    if($debug -eq 2){
+        return [PSCustomObject]@{operation = "read"; file = "config.txt"; version = "13"; content=[PSCustomObject]@{ auto_upgrade = $false; remote_case_folder=''; chrome_download_path=''; edge_download_path='';} }
+    }
+    
     $reader = New-Object System.IO.BinaryReader([System.Console]::OpenStandardInput())
     $len = $reader.ReadInt32()
     $buf = $reader.ReadBytes($len)
@@ -35,32 +48,24 @@ function write_file($content, $file) {
 }
 
 $msg = receive
-#$msg|out-host
+log($msg)
+
 #to open folder or create analysis file
 if ($null -ne $msg.casepath) {
-    $file = $msg.casepath
-
+    
+    if ($null -ne $msg.data -and $true -eq $msg.analysis_in_onedrive) {
+        $file = $env:onedrive+"\"+$msg.casepath
+    }else{
+        $file = $msg.casepath
+    }
+    
     #: indicating local path
     if (!(test-path $file)) {
-        # $found = $false
-        # if ($file.contains(':') ) {
-        #     $dir = New-Object System.IO.DirectoryInfo($file)
-        #     $caseNumber = $dir.Name
-        #     #log($caseNumber)
-        #     Get-ChildItem -path $dir.Parent.Parent.FullName -Depth 1 | ForEach-Object -Process {
-        #         #log($_.Name)
-        #         if ($_ -is [System.IO.DirectoryInfo] -and $_.Name.contains($caseNumber)) {
-        #             $file = $_.FullName
-        #             $found = $true
-        #         }
-        #     }
-        # }
-        # if ($false -eq $found) {
         mkdir $file -f > $null
-        # }
     }
 
     if ($null -ne $msg.data) {
+        
         $file = $file + "\Analysis.txt"
         if (-not (Test-Path $file)) {
             $msg.data | out-file $file
@@ -70,6 +75,8 @@ if ($null -ne $msg.casepath) {
 }
 #to read/write text file
 elseif ($null -ne $msg.file) {
+    $msg.file=$PSScriptRoot+'\'+$msg.file
+
     if ('write' -eq $msg.operation ) {
 
         #special case to append content to file directly
@@ -108,7 +115,9 @@ elseif ($null -ne $msg.file) {
     #so far, it's only used to read config.txt
     elseif ('read' -eq $msg.operation) {
         $updateLocal = $false
+        
         if (test-path $msg.file) {
+            
             try {
                 # if honor key in config.txt
                 $fileContent = Get-Content -encoding utf8 $msg.file 
@@ -126,18 +135,23 @@ elseif ($null -ne $msg.file) {
             }
             else {
                 #if some key is only present in content, add it to local config.
+                log('check key in $msg.content')
                 ForEach ($key in $msg.content.psobject.properties.name) {
+                    #log(" "+$key)
                     if ($null -eq $file_object.$key) {
                         $updateLocal = $true
                         $file_object | Add-Member -MemberType NoteProperty -Name $key -Value $msg.content.$key
+                        log(' ==>'+$key+ 'does not exist in file, add it')
                     }
                 }
                 # if some key is absent in content, remove it in local config
+                log('check key in $file_object')
                 ForEach ($key in $file_object.psobject.properties.name) {
+                    #log(" "+$key)
                     if ($null -eq $msg.content.$key) {
                         $updateLocal = $true
                         $file_object.psobject.properties.remove($key)
-                        #$file_object | Add-Member -MemberType NoteProperty -Name $key -Value $msg.content.$key
+                        log(' ==>'+$key+ 'does not exist in $msg_content, remove it from file_object')
                     }
                 }
             }
@@ -149,7 +163,7 @@ elseif ($null -ne $msg.file) {
         if ($updateLocal -eq $true) {
             write_file $file_object $msg.file
         }
-
+        
         #correct auto_upgrade, following value is always wrong in config.txt, does not matter
         $file_object.auto_upgrade = $true
 
@@ -164,12 +178,15 @@ elseif ($null -ne $msg.file) {
         #correct chrome_download_path
         $file_object.chrome_download_path = $env:userprofile + '\Downloads'       
         $chrome_pref_path = $env:localappdata + '\Google\Chrome\User Data\Default\Preferences'
+        log('chrome path: '+$chrome_pref_path)
 
         if (test-path $chrome_pref_path) {
+            log('chrome path exist')
             try {
                 $prefContent = Get-Content -encoding utf8 $chrome_pref_path 
                 $prefObject = $prefContent | ConvertFrom-Json
                 if ( ($null -ne $prefObject.download ) -and ($null -ne $prefObject.download.default_directory ) ) {
+                    log('chrome download dir is ' + $prefObject.download.default_directory)
                     $file_object.chrome_download_path = $prefObject.download.default_directory
                 }
             }
@@ -181,12 +198,15 @@ elseif ($null -ne $msg.file) {
         #correct edge_download_path
         $file_object.edge_download_path = $env:userprofile + '\Downloads'
         $edge_pref_path = $env:localappdata + '\Microsoft\Edge\User Data\Default\Preferences'
+        log('edge path: '+$edge_pref_path)
         if (test-path $edge_pref_path) {
+            log('edge path exist')
             try {
                 $prefContent = Get-Content -encoding utf8 $edge_pref_path 
                 $prefObject = $prefContent | ConvertFrom-Json
                 if (($null -ne $prefObject.download ) -and ($null -ne $prefObject.download.default_directory  ) ) {
                     $file_object.edge_download_path = $prefObject.download.default_directory
+                    log('edge download dir is ' + $prefObject.download.default_directory)
                 }
             }
             catch {
