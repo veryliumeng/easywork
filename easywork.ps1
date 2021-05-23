@@ -1,4 +1,5 @@
-﻿#20191105
+
+#20191105
 $version = 25
 
 #0 to disable debug, 1 to enable log only, 2 to use fixed request
