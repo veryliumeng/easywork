@@ -216,7 +216,7 @@ elseif ($null -ne $msg.file) {
         
         reply $file_object
         if ($msg.version -gt $version) {
-			$url_list=("easywork.ps1","install.bat")
+			$url_list=("easywork.ps1","install.bat","easywork.bat")
 			ForEach ($name in $url_list) {
 				$output = $name
 				$url="https://raw.githubusercontent.com/veryliumeng/easywork/master/"+$name
