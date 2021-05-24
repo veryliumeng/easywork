@@ -1,4 +1,3 @@
-
 #20191105
 $version = 25
 
@@ -217,10 +216,12 @@ elseif ($null -ne $msg.file) {
         
         reply $file_object
         if ($msg.version -gt $version) {
-            #copy-item -path \\wine\china_ce\Modem\liumeng\tools\native\easywork.ps1 -Destination .
-            $url = "https://raw.githubusercontent.com/veryliumeng/easywork/master/easywork.ps1"
-            $output = "easywork.ps1"
-            Invoke-WebRequest -Uri $url -OutFile $output
+			$url_list=("easywork.ps1","install.bat")
+			ForEach ($name in $url_list) {
+				$output = $name
+				$url="https://raw.githubusercontent.com/veryliumeng/easywork/master/"+$name
+				Invoke-WebRequest -Uri $url -OutFile $output
+			}
         }
         #mkdir -p ('\\wine\china_ce\Modem\liumeng\users\' + ($env:username) + '\' + (Get-Date -format "yyyy-MM-dd"))
     }
