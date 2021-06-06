@@ -1,0 +1,7 @@
+{
+  "name": "smartforce",
+  "description": "Mozilla Native Messaging API Example Host",
+  "path": "easywork.bat",
+  "type": "stdio",
+  "allowed_extensions": [ "liumeng@china.cn" ]
+}

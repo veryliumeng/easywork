@@ -6,9 +6,7 @@ powershell unblock-file -path easywork.ps1
 :: Change HKCU to HKLM if you want to install globally.
 :: %~dp0 is the directory containing this bat script and ends with a backslash.
 REG ADD "HKCU\Software\Google\Chrome\NativeMessagingHosts\smartforce" /ve /t REG_SZ /d "%~dp0easywork.json" /f
-echo.
-echo.
-echo ==== please restart browser to use easywork ====
+REG ADD "HKCU\SOFTWARE\Mozilla\NativeMessagingHosts\smartforce" /ve /t REG_SZ /d "%~dp0mozilla.json" /f
 echo.
 echo.
 PAUSE
