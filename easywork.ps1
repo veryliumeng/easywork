@@ -1,5 +1,5 @@
 #20191105
-$version = 25
+$version = 26
 
 #0 to disable debug, 1 to enable log only, 2 to use fixed request
 $debug=0
@@ -22,13 +22,13 @@ function reply ($rsp) {
     $writer = New-Object System.IO.BinaryWriter([System.Console]::OpenStandardOutput())
     #log($writer)
     $json = $rsp | convertto-json
-    #log($json)
+    log($json)
     $buffer = [system.text.encoding]::utf8.getBytes($json)
     $writer.Write([int32]$buffer.length)
-    #log($buffer.length)
+    log($buffer.length)
     $writer.write([byte[]]$buffer)
     $writer.Close()
-    #log('replied')
+    log('replied')
 }
 #output is object
 function receive() {
@@ -175,11 +175,39 @@ elseif ($null -ne $msg.file) {
             $file_object.remote_case_folder = $msg.content.remote_case_folder
         }
         
+        #correct firefox download path
+        #C:\Users\liumeng\AppData\Roaming\Mozilla\Firefox\Profiles\40pddxij.default\prefs.js
+        #user_pref("browser.download.dir", "C:\\Users\\liumeng\\Downloads\\");
+        if($file_object.firefox_download_path -ne $null){
+            $file_object.firefox_download_path = $env:userprofile + '\Downloads'
+            $tmp_path = $env:APPDATA + '\Mozilla\Firefox\Profiles'
+            if(test-path $tmp_path){
+                $tmp_list = Get-ChildItem $tmp_path | Sort-Object -Descending -Property LastWriteTime | select -first 1 | select-object fullname
+                if(($tmp_list -ne $null) -and ($tmp_list -isnot 'array')){
+                    $firefox_pref_path= $tmp_list.fullname + '\prefs.js'
+                    log('firefox path: '+$firefox_pref_path)
+                    if (test-path $firefox_pref_path) {
+                        log('firefox path exist')
+                        try {
+                            $tmpContent = Get-Content -encoding utf8 $firefox_pref_path
+                            $result = ($tmpContent | select-string -Pattern '"browser.download.dir", "(.*?)"') 
+                            if($result.Matches.Length -ne 0){
+                                $file_object.firefox_download_path = $result.Matches[0].Groups[1].Value 
+                                log('firefox download path: '+$file_object.firefox_download_path)
+                            }
+                        }
+                        catch {
+                            log($PSItem.ToString())
+                        }   
+                    }
+                }
+            }
+        }
+
         #correct chrome_download_path
-        $file_object.chrome_download_path = $env:userprofile + '\Downloads'       
+        $file_object.chrome_download_path = $env:userprofile + '\Downloads'
         $chrome_pref_path = $env:localappdata + '\Google\Chrome\User Data\Default\Preferences'
         log('chrome path: '+$chrome_pref_path)
-
         if (test-path $chrome_pref_path) {
             log('chrome path exist')
             try {
@@ -215,6 +243,7 @@ elseif ($null -ne $msg.file) {
         }
         
         reply $file_object
+        
         if ($msg.version -gt $version) {
 			$url_list=("easywork.ps1","install.bat","easywork.bat")
 			ForEach ($name in $url_list) {
